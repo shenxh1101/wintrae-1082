@@ -52,7 +52,10 @@
           <button class="build-btn active" data-building="none">❌ 取消选择</button>
         </div>
       </div>
-      <div id="mapGrid" class="map-grid"></div>
+      <div class="map-area">
+        <div id="mapGrid" class="map-grid"></div>
+        <div id="buildingSidebar" class="building-sidebar"></div>
+      </div>
       <div class="legend">
         <div><span class="legend-dot" style="background:#8fbc8f"></span>空地</div>
         <div><span class="legend-dot" style="background:#6b8e23"></span>农田</div>
@@ -83,6 +86,7 @@
     <!-- 资源界面 -->
     <section id="tab-resources" class="tab-panel">
       <div class="panel-header"><h2>资源管理</h2></div>
+      <div id="warehouseInfo" style="display:none"></div>
       <div class="resource-grid">
         <div class="resource-card" id="res-money">
           <div class="res-icon">💰</div>
