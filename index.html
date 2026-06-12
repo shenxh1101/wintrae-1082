@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字乡村 - 经营模拟游戏</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="logo">🌾 数字乡村</div>
+    <div class="season-info">
+      <span id="yearLabel">第 1 年</span>
+      <span id="seasonLabel">春季</span>
+      <span id="dayLabel">第 1 天</span>
+    </div>
+    <div class="quick-stats">
+      <div class="stat"><span class="icon">💰</span><span id="qMoney">10000</span></div>
+      <div class="stat"><span class="icon">👥</span><span id="qLabor">5</span></div>
+      <div class="stat"><span class="icon">😊</span><span id="qHappy">70</span></div>
+      <div class="stat"><span class="icon">🌿</span><span id="qEco">80</span></div>
+    </div>
+    <div class="actions">
+      <button id="nextDayBtn">⏭ 下一天</button>
+      <button id="saveBtn">💾 存档</button>
+      <button id="loadBtn">📂 读档</button>
+      <button id="newGameBtn">🔄 新游戏</button>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button class="tab active" data-tab="map">🗺️ 地图</button>
+    <button class="tab" data-tab="tasks">📋 任务</button>
+    <button class="tab" data-tab="resources">📦 资源</button>
+    <button class="tab" data-tab="villagers">👨‍👩‍👧‍👦 村民</button>
+    <button class="tab" data-tab="results">🏆 成果</button>
+  </nav>
+
+  <main id="content">
+    <!-- 地图界面 -->
+    <section id="tab-map" class="tab-panel active">
+      <div class="panel-header">
+        <h2>村庄地图</h2>
+        <div class="build-palette">
+          <span>选择建筑：</span>
+          <button class="build-btn" data-building="farm">🌾 农田 (2000)</button>
+          <button class="build-btn" data-building="homestay">🏡 民宿 (8000)</button>
+          <button class="build-btn" data-building="warehouse">🏭 仓储 (5000)</button>
+          <button class="build-btn" data-building="clinic">🏥 卫生站 (10000)</button>
+          <button class="build-btn" data-building="plaza">🎭 文化广场 (12000)</button>
+          <button class="build-btn active" data-building="none">❌ 取消选择</button>
+        </div>
+      </div>
+      <div id="mapGrid" class="map-grid"></div>
+      <div class="legend">
+        <div><span class="legend-dot" style="background:#8fbc8f"></span>空地</div>
+        <div><span class="legend-dot" style="background:#6b8e23"></span>农田</div>
+        <div><span class="legend-dot" style="background:#deb887"></span>民宿</div>
+        <div><span class="legend-dot" style="background:#a0522d"></span>仓储</div>
+        <div><span class="legend-dot" style="background:#4682b4"></span>卫生站</div>
+        <div><span class="legend-dot" style="background:#da70d6"></span>文化广场</div>
+        <div><span class="legend-dot" style="background:#696969"></span>山地</div>
+        <div><span class="legend-dot" style="background:#4169e1"></span>河流</div>
+      </div>
+    </section>
+
+    <!-- 任务界面 -->
+    <section id="tab-tasks" class="tab-panel">
+      <div class="panel-header">
+        <h2>任务中心</h2>
+        <div class="task-summary">
+          进行中: <span id="activeTaskCount">0</span> | 
+          已完成: <span id="doneTaskCount">0</span> | 
+          累计奖励: <span id="totalReward">0</span>💰
+        </div>
+      </div>
+      <div class="task-list-wrapper">
+        <div id="taskList" class="task-list"></div>
+      </div>
+    </section>
+
+    <!-- 资源界面 -->
+    <section id="tab-resources" class="tab-panel">
+      <div class="panel-header"><h2>资源管理</h2></div>
+      <div class="resource-grid">
+        <div class="resource-card" id="res-money">
+          <div class="res-icon">💰</div>
+          <div class="res-title">资金</div>
+          <div class="res-value" id="resMoneyValue">10000</div>
+          <div class="res-desc">用于建设和运营</div>
+          <div class="res-change" id="resMoneyChange">+0/天</div>
+        </div>
+        <div class="resource-card" id="res-labor">
+          <div class="res-icon">👥</div>
+          <div class="res-title">人力</div>
+          <div class="res-value"><span id="resLaborValue">5</span> / <span id="resLaborMax">10</span></div>
+          <div class="res-desc">可投入工作的村民</div>
+          <div class="res-change">闲置: <span id="resLaborIdle">5</span></div>
+        </div>
+        <div class="resource-card" id="res-materials">
+          <div class="res-icon">🧰</div>
+          <div class="res-title">物资</div>
+          <div class="res-value" id="resMatValue">100</div>
+          <div class="res-desc">建材和日用品</div>
+          <div class="res-change" id="resMatChange">+0/天</div>
+        </div>
+        <div class="resource-card" id="res-season">
+          <div class="res-icon">🌱</div>
+          <div class="res-title">季节产出</div>
+          <div class="res-value" id="resSeasonValue">春播期</div>
+          <div class="res-desc">当前季节农作物</div>
+          <div class="res-change" id="resSeasonDesc">适宜播种</div>
+        </div>
+      </div>
+      <div class="resource-detail">
+        <h3>各建筑运营情况</h3>
+        <div id="buildingDetails" class="building-details"></div>
+      </div>
+    </section>
+
+    <!-- 村民界面 -->
+    <section id="tab-villagers" class="tab-panel">
+      <div class="panel-header">
+        <h2>村民管理</h2>
+        <div class="villager-summary">
+          总人口: <span id="totalPop">12</span> | 
+          平均满意度: <span id="avgHappy">70</span> | 
+          参与率: <span id="participationRate">60%</span>
+        </div>
+      </div>
+      <div id="villagerList" class="villager-list"></div>
+    </section>
+
+    <!-- 成果界面 -->
+    <section id="tab-results" class="tab-panel">
+      <div class="panel-header"><h2>发展成果</h2></div>
+      <div class="results-grid">
+        <div class="result-card">
+          <h3>📈 收入统计</h3>
+          <div class="stat-row"><span>累计收入</span><span id="totalIncome">0</span></div>
+          <div class="stat-row"><span>日均收入</span><span id="dailyIncome">0</span></div>
+          <div class="stat-row"><span>最高单日</span><span id="maxDailyIncome">0</span></div>
+        </div>
+        <div class="result-card">
+          <h3>🏥 公共服务</h3>
+          <div class="stat-row"><span>卫生站数</span><span id="clinicCount">0</span></div>
+          <div class="stat-row"><span>文化广场数</span><span id="plazaCount">0</span></div>
+          <div class="stat-row"><span>服务评分</span><span id="serviceScore">0</span></div>
+        </div>
+        <div class="result-card">
+          <h3>🌿 生态评分</h3>
+          <div class="progress-bar"><div id="ecoBar" class="progress-fill eco"></div></div>
+          <div class="eco-score"><span id="ecoScore">80</span> / 100</div>
+          <div class="stat-row"><span>环境事件</span><span id="ecoIncidents">0</span></div>
+        </div>
+        <div class="result-card">
+          <h3>⚠️ 风险事件</h3>
+          <div id="riskEvents" class="risk-events">暂无风险事件</div>
+        </div>
+      </div>
+      <div class="year-evaluation">
+        <h3>📅 年度评价</h3>
+        <div id="yearEval" class="year-eval-content">暂无年度评价，请先经营至少一年。</div>
+      </div>
+      <div class="history-log">
+        <h3>📜 历史日志</h3>
+        <div id="historyLog" class="history-log-content"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toastContainer"></div>
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="modalTitle">提示</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button id="modalCancel">取消</button>
+      <button id="modalConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
